@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>English A1→B1 — Ad</title>
+  <style>
+    :root{ --violet:#6366f1; --gold:#f5d38a; }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    html,body{height:100%;background:#05060a;color:#fff;font-family:Georgia,"Times New Roman",serif;}
+    .stage{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px 12px 24px;}
+    .screen{
+      position:relative;width:min(100%,1100px);aspect-ratio:16/9;
+      background:#000;overflow:hidden;border-radius:18px;
+      box-shadow:0 30px 80px rgba(0,0,0,.55);
+    }
+    .slide{position:absolute;inset:0;opacity:0;transition:opacity .65s ease;overflow:hidden;}
+    .slide.on{opacity:1;}
+    .slide img{width:100%;height:100%;object-fit:cover;transform:scale(1.1);animation:ken 16s ease-out forwards;}
+    @keyframes ken{from{transform:scale(1.14);}to{transform:scale(1);}}
+    .veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,6,10,.2),rgba(5,6,10,.78) 88%);}
+    .pip{
+      position:absolute;right:4%;top:8%;width:34%;aspect-ratio:16/10;
+      border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.25);
+      box-shadow:0 12px 40px rgba(0,0,0,.45);background:#111;
+    }
+    .pip img{width:100%;height:100%;object-fit:cover;animation:none;transform:none;}
+    .caption{
+      position:absolute;left:6%;right:40%;bottom:13%;
+      font-size:clamp(1.25rem,3.8vw,2.4rem);line-height:1.15;letter-spacing:-.02em;
+      text-shadow:0 8px 30px rgba(0,0,0,.65);
+    }
+    .caption small{
+      display:block;margin-top:10px;font-family:system-ui,sans-serif;
+      font-size:.38em;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:700;
+    }
+    .bar{position:absolute;left:0;right:0;bottom:0;height:4px;background:rgba(255,255,255,.15);}
+    .bar>i{display:block;height:100%;width:0;background:linear-gradient(90deg,#6366f1,#a855f7);}
+    .end{
+      position:absolute;inset:0;display:none;align-items:center;justify-content:center;
+      flex-direction:column;gap:12px;background:rgba(5,6,10,.78);text-align:center;padding:24px;
+    }
+    .end.show{display:flex;}
+    .end h2{font-size:clamp(1.8rem,5vw,3rem);}
+    .end p{font-family:system-ui,sans-serif;color:#cbd5e1;}
+    .hud{margin-top:16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center;font-family:system-ui,sans-serif;}
+    .play{
+      border:0;cursor:pointer;background:linear-gradient(135deg,#6366f1,#7c3aed);
+      color:#fff;font-weight:800;padding:14px 26px;border-radius:999px;font-size:1rem;
+    }
+    .voices{display:flex;background:#111827;border:1px solid #1f2937;border-radius:999px;overflow:hidden;}
+    .voices button{
+      border:0;background:transparent;color:#94a3b8;font-weight:700;padding:10px 16px;cursor:pointer;font-size:.85rem;
+    }
+    .voices button.on{background:#6366f1;color:#fff;}
+    .hint{color:#94a3b8;font-size:.82rem;}
+    @media (max-width:640px){
+      .pip{width:42%;top:6%;right:3%;}
+      .caption{right:6%;bottom:12%;font-size:1.15rem;}
+    }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <div class="screen" id="screen">
+      <div class="slide on" data-i="0">
+        <img src="01-hero.jpg" alt="">
+        <div class="veil"></div>
+        <div class="pip"><img src="ui-home.jpg" alt="The notebook"></div>
+        <div class="caption">A1 → B1<small>The real notebook</small></div>
+      </div>
+      <div class="slide" data-i="1">
+        <img src="ui-home.jpg" alt="">
+        <div class="veil"></div>
+        <div class="caption">Not all of English.<small>Only what comes back</small></div>
+      </div>
+      <div class="slide" data-i="2">
+        <img src="ui-grammar.jpg" alt="">
+        <div class="veil"></div>
+        <div class="pip"><img src="02-verbs.jpg" alt=""></div>
+        <div class="caption">Grammar. Twelve tenses.<small>0. Temps · 1. Temps conj.</small></div>
+      </div>
+      <div class="slide" data-i="3">
+        <img src="ui-games.jpg" alt="">
+        <div class="veil"></div>
+        <div class="caption">Games that teach.<small>Letters · memory · dictation</small></div>
+      </div>
+      <div class="slide" data-i="4">
+        <img src="ui-defauts.jpg" alt="">
+        <div class="veil"></div>
+        <div class="pip"><img src="05-cta.jpg" alt=""></div>
+        <div class="caption">Your mistakes. Then start.<small>English A1 → B1</small></div>
+      </div>
+      <div class="bar"><i id="prog"></i></div>
+      <div class="end" id="end">
+        <h2>English A1 → B1</h2>
+        <p>Open the notebook. Learn what counts.</p>
+        <button class="play" type="button" id="replay">Play again</button>
+      </div>
+    </div>
+    <div class="hud">
+      <div class="voices" role="group" aria-label="Voice">
+        <button type="button" class="on" data-v="ad">Ad</button>
+        <button type="button" data-v="ser">Serious</button>
+      </div>
+      <button class="play" type="button" id="play">▶ Play the ad</button>
+      <span class="hint">English voice · real screens from the project</span>
+    </div>
+  </div>
+  <script>
+    const PACKS = {
+      ad: ["ad-01.mp3","ad-02.mp3","ad-03.mp3","ad-04.mp3","ad-05.mp3"],
+      ser:["ser-01.mp3","ser-02.mp3","ser-03.mp3","ser-04.mp3","ser-05.mp3"]
+    };
+    let voice = "ad";
+    const slides = [...document.querySelectorAll(".slide")];
+    const prog = document.getElementById("prog");
+    const end = document.getElementById("end");
+    const audio = new Audio();
+    let i=0, raf=0, playing=false;
+
+    document.querySelectorAll(".voices button").forEach(b=>{
+      b.addEventListener("click", ()=>{
+        voice = b.dataset.v;
+        document.querySelectorAll(".voices button").forEach(x=>x.classList.toggle("on", x===b));
+      });
+    });
+
+    function show(n){ slides.forEach(s=>s.classList.toggle("on", Number(s.dataset.i)===n)); }
+    function tick(){
+      if(!playing || !audio.duration) return;
+      prog.style.width = ((i + audio.currentTime/audio.duration) / 5 * 100) + "%";
+      raf = requestAnimationFrame(tick);
+    }
+    function playClip(){
+      const clips = PACKS[voice];
+      if(i>=clips.length){ playing=false; end.classList.add("show"); prog.style.width="100%"; return; }
+      show(i);
+      audio.src = clips[i];
+      audio.play().catch(()=>{});
+      cancelAnimationFrame(raf); raf = requestAnimationFrame(tick);
+    }
+    audio.addEventListener("ended", ()=>{ i++; playClip(); });
+    function start(){
+      end.classList.remove("show");
+      i=0; playing=true; prog.style.width="0";
+      playClip();
+    }
+    document.getElementById("play").addEventListener("click", start);
+    document.getElementById("replay").addEventListener("click", start);
+  </script>
+</body>
+</html>
